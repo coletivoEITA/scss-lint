@@ -19,6 +19,7 @@ module SCSSLint
 
         add_display_options parser
         add_linter_options parser
+        add_apply_options parser
         add_file_options parser
         add_info_options parser
       end.parse!(args)
@@ -63,6 +64,13 @@ module SCSSLint
       parser.on('-x', '--exclude-linter linter,...', Array,
                 "Specify which linters you don't want to run") do |linters|
         @options[:excluded_linters] = linters
+      end
+    end
+
+    def add_apply_options(parser)
+      parser.on_tail '-a', '--apply',
+        'Apply supported linters and output files' do
+        @options[:apply] = true
       end
     end
 

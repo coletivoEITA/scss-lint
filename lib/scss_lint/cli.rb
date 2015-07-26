@@ -54,9 +54,20 @@ module SCSSLint
     end
 
     def scan_for_lints(options, config)
+      files = FileFinder.new(config).find(options[:files])
+
       runner = Runner.new(config)
-      runner.run(FileFinder.new(config).find(options[:files]))
+      engines = runner.run(files)
       report_lints(options, runner.lints, runner.files)
+
+      if options[:apply]
+        runner.lints.each do |lint|
+          lint.apply_block.call if lint.apply_block
+        end
+        engines.each do |engine|
+          puts engine.tree.to_scss
+        end
+      end
 
       if runner.lints.any?(&:error?)
         halt :error
